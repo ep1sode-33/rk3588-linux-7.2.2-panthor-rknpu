@@ -1,5 +1,5 @@
 cb8a6d9fc3ebcf9c10d13425a8b18b57d13661a58682be9db8e542b8dbeb3642  ./.gitignore
-ca17d84a906231942a37c0da89a95294905dd3717e86f50d967dcb319fdd79b7  ./README.md
+9cf8673c529e69a51215608544ae51323b2857d0279b81a5a40fe3b3fc416f9c  ./README.md
 a33be851a88fc6fbc40cd0abf9f15a27dee11ea5ddc8fe7f55df818683d68a7b  ./boot/boot-7.2.2-rk3588-panthor-rknpu-3core.cmd
 b4212e84b461a8d6c7e669d5f9a5feff211a81399171f311f13f09756b2fd26b  ./boot/boot-7.2.2-rk3588-panthor-rknpu-3core.scr
 7995a80b7fb62208b7b3aeb1506764f0abad3180ff358f07921b3ea20e6fa6b7  ./boot/boot-7.2.2-rk3588-panthor-rknpu.cmd
@@ -25,11 +25,13 @@ d5c9b4b7f96746bd2ecd79eccfaceb95fc3c974771aad2f1dc2ee256472fec76  ./diagnostics/
 724357f8cd57b51a2ba18b2ec273aeef2f467d9f04242dd72928d85ae448b35f  ./diagnostics/disable-rknpu-device.dtso
 bb49193964a9a774165984af7fda469a373fa9dfcd57fccf70cf4bdb26f67aaf  ./diagnostics/disable-rknpu.dtbo
 dc7fc6adffa9fd136eef0d28c4b0c07ea2e0e7bed0a7d3855f78b6ae7d82dd0f  ./diagnostics/disable-rknpu.dtso
+7360966c84cad92d5ed78ea5fe858210b06aa0d9210e3544e5e20bcb661e55bc  ./diagnostics/panthor-egl-smoke.c
 413a57c338bbb6c9324ab43a86189a0d6a82f50fc4dc39f5213a6d5847605487  ./diagnostics/rk3588-orangepi-5-plus-7.2.2-rk3588-panthor-rknpu-3core-iommu-only.dtb
 da0a28f1642bb12d68063181a77dc125d5fbce29222e40af5872194b7ce893a6  ./diagnostics/rk3588-orangepi-5-plus-7.2.2-rk3588-panthor-rknpu-3core-iommu-pd-fix.dtb
 22da6c2de683706c5c40e66aca1dd13a6f881a8fe3cdf4d8fd6373d9c16fa41e  ./diagnostics/rk3588-orangepi-5-plus-7.2.2-rk3588-panthor-rknpu-3core-no-npu.dtb
 12366ef51defd5f46591863b2fc68525c76a0ffc7ac2c0e8aa9de722bab38a80  ./diagnostics/rknn-core-mask-preload.c
-db1fe8c3cd4424083dac373d70c74f41f46b169c4fca029ace8e485f697bb101  ./docs/DEPLOYMENT.md
+0e966854a90e78a532a187890749128e31b1d2bcdbc1ec4299156ef5cf9b0614  ./docs/DEPLOYMENT.md
+e588a091f663ca80c82f3963b750b3267957fd0aba2e97724e34a991d45be5e5  ./docs/MESA-25.md
 adee48c2aac5e840f7c1bf3d12dc92b7148147f632dde133eab223e0669cdf7f  ./docs/REPRODUCING.md
 4291b9e6db29ce88268eea64ad1e57956fd37be29dbe0e06d432d99b0e1e0f53  ./patches/0001-accel-add-initial-mainline-RKNPU-ABI-port-for-RK3588.patch
 9fdae364fc742d963584b32b706ee13d7f34909d40de1b5e16dfd70329020081  ./patches/0002-arm64-dts-rk3588-combine-NPU-cores-for-vendor-RKNPU-.patch

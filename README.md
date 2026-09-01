@@ -25,6 +25,9 @@ through one mainline Rockchip IOMMU domain.
 See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for the evidence, exact hashes,
 fallback design and deployment details.
 
+Mesa 25 installation, Panthor/PanVK results and the tested offline rollback are
+documented in [docs/MESA-25.md](docs/MESA-25.md).
+
 ## Repository contents
 
 - `patches/`: ordered patch series against pristine Linux 7.2.2.
@@ -57,7 +60,11 @@ exact release `7.2.2-rk3588-panthor-rknpu`.
 
 ## Large artifacts
 
-The build output directory is intentionally excluded. The private release
-bundle contains the exact validated Image, DTBs, modules, initramfs, firmware,
-boot scripts and a SHA-256 manifest.
+The build output directory is intentionally excluded. The prepared private
+release bundle contains the exact validated Image, DTBs, modules, initramfs,
+firmware, boot scripts and a SHA-256 manifest:
 
+```text
+rk3588-linux-7.2.2-panthor-rknpu-deployment.tar.zst
+990a19cbb9312bef60e7af32972871a902b221c1ef264817e688a88c3e1c69fe
+```

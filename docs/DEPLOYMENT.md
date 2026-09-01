@@ -186,20 +186,29 @@ combined IOMMU supplier returned to runtime-suspended state after validation.
 The complete packaged validation report on devb is
 `/tmp/linux-7.2.2-rk3588-validation-3core-iommu-pd-fix-9e6e4cff`.
 
-devb currently has Mesa 22.3.6. Panthor userspace support started in Mesa 24.1,
-and Mesa 25.0 further enabled PanVK by default for v10 GPUs such as the G610.
-Bookworm backports currently offers Mesa 25.0.7, but it has deliberately not
-been installed before the kernel boot test because it would replace the current
-graphics libraries. Relevant upstream release notes:
+devb was upgraded from Mesa 22.3.6 to the Debian bookworm-backports Mesa
+25.0.7 packages after the kernel-only validation. Panthor userspace support
+started in Mesa 24.1, and Mesa 25.0 enabled PanVK by default for v10 GPUs such
+as the G610. Relevant upstream release notes:
 
 - <https://docs.mesa3d.org/relnotes/24.1.0.html>
 - <https://docs.mesa3d.org/relnotes/25.0.0.html>
 
-The combined three-core RKNPU topology and no-serial one-shot recovery path are
-validated. Keeping vendor 6.1 as the default is now an operational policy
-choice rather than an unresolved NPU blocker. Panthor kernel binding is
-successful, but graphics userspace acceleration still needs Mesa 24.1 or
-newer.
+On the formal three-core 7.2.2 boot, Mesa reports `Mali-G610 (Panfrost)`,
+OpenGL ES 3.1 and PanVK device `Mali-G610`. A header-free GBM/EGL smoke test
+submitted a real off-screen clear/readback and returned pixel
+`68,136,187,255` with `GL_ERROR=0` and `RESULT=PASS`. The same boot also passed
+the RKNN baseline and recorded no GPU, NPU or IOMMU fault.
+
+The default vendor 6.1 boot was tested after the Mesa upgrade. It remained
+healthy, with NVMe root, br0, services and RKNN all passing. Its proprietary
+`/dev/mali0` interface is not Panthor, so Mesa correctly exposes llvmpipe there;
+the RKNN output remained byte-identical to the baseline. See `docs/MESA-25.md`
+for package versions, evidence and the tested offline downgrade command.
+
+The combined three-core RKNPU topology, Mesa/Panthor userspace and no-serial
+one-shot recovery path are validated. Keeping vendor 6.1 as the default is now
+an operational policy choice rather than an unresolved GPU or NPU blocker.
 
 ## Rebuild inputs
 
