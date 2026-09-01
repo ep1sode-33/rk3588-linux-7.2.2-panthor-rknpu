@@ -70,10 +70,9 @@ It must print exactly `7.2.2-rk3588-panthor-rknpu`.
 
 ```text
 b4600f3d36c1a93a9fdb4915e0c2791b1370c3726d0835a105110d05f378a617  Image
-da0a28f1642bb12d68063181a77dc125d5fbce29222e40af5872194b7ce893a6  three-core DTB
+6a6c4a34dc5fa735d81f64e47ee15532cfdf60766691851b678328b8f6dc7f8f  three-core DTB
 731fd150169445c84e298f3efd688d51c562b4478f8597e868d3b1cbcc8fe1bb  rknpu.ko
 ```
 
 The private release contains a complete path-qualified manifest for every
 deployment file.
-

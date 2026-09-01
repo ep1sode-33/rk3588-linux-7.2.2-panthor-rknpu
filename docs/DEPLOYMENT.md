@@ -98,12 +98,18 @@ The promoted three-core kernel and DTB have these SHA-256 hashes:
 
 ```text
 b4600f3d36c1a93a9fdb4915e0c2791b1370c3726d0835a105110d05f378a617  Image-7.2.2-rk3588-panthor-rknpu
-da0a28f1642bb12d68063181a77dc125d5fbce29222e40af5872194b7ce893a6  rk3588-orangepi-5-plus-7.2.2-rk3588-panthor-rknpu-3core.dtb
+6a6c4a34dc5fa735d81f64e47ee15532cfdf60766691851b678328b8f6dc7f8f  rk3588-orangepi-5-plus-7.2.2-rk3588-panthor-rknpu-3core.dtb
 ```
 
 The pre-fix promoted files remain on devb as
 `Image-7.2.2-rk3588-panthor-rknpu.pre-iommu-pd-fix` and
 `rk3588-orangepi-5-plus-7.2.2-rk3588-panthor-rknpu-3core.dtb.pre-iommu-pd-fix`.
+
+The promoted DTB also enables the Orange Pi 5 Plus header I2C2 controller with
+the upstream `i2c2m0` pinctrl. Target validation showed `/dev/i2c-2` backed by
+`feaa0000.i2c`; env-api returned a healthy live SHT30/QMP6988 sample after the
+one-shot reboot. The immediately preceding DTB remains on devb as
+`rk3588-orangepi-5-plus-7.2.2-rk3588-panthor-rknpu-3core.pre-i2c2.dtb`.
 
 The corrected RKNPU module SHA-256 is
 `731fd150169445c84e298f3efd688d51c562b4478f8597e868d3b1cbcc8fe1bb`.
@@ -137,7 +143,7 @@ The three-core candidate files have these SHA-256 hashes:
 ```text
 a33be851a88fc6fbc40cd0abf9f15a27dee11ea5ddc8fe7f55df818683d68a7b  boot-7.2.2-rk3588-panthor-rknpu-3core.cmd
 b4212e84b461a8d6c7e669d5f9a5feff211a81399171f311f13f09756b2fd26b  boot-7.2.2-rk3588-panthor-rknpu-3core.scr
-da0a28f1642bb12d68063181a77dc125d5fbce29222e40af5872194b7ce893a6  rk3588-orangepi-5-plus-7.2.2-rk3588-panthor-rknpu-3core.dtb
+6a6c4a34dc5fa735d81f64e47ee15532cfdf60766691851b678328b8f6dc7f8f  rk3588-orangepi-5-plus-7.2.2-rk3588-panthor-rknpu-3core.dtb
 b4600f3d36c1a93a9fdb4915e0c2791b1370c3726d0835a105110d05f378a617  Image-7.2.2-rk3588-panthor-rknpu
 ```
 

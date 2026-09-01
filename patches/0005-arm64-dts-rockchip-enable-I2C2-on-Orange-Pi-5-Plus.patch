@@ -1,0 +1,27 @@
+From fe8f6dfabce66cabb7ee54860677b4ae0f0cd1d7 Mon Sep 17 00:00:00 2001
+From: Junkai Mo <mowilliam416@gmail.com>
+Date: Tue, 1 Sep 2026 13:37:29 +0000
+Subject: [PATCH] arm64: dts: rockchip: enable I2C2 on Orange Pi 5 Plus
+
+---
+ arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
+index 967b8df..ecff85d 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
+@@ -265,6 +265,10 @@ &hym8563 {
+ 	pinctrl-0 = <&hym8563_int>;
+ };
+ 
++&i2c2 {
++	status = "okay";
++};
++
+ &i2c6 {
+ 	usbc0: usb-typec@22 {
+ 		compatible = "fcs,fusb302";
+-- 
+2.43.0
+

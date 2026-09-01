@@ -19,6 +19,9 @@ through one mainline Rockchip IOMMU domain.
   cores enabled.
 - Every RKNN validation run produced the byte-identical vendor-6.1 baseline
   output.
+- The Orange Pi 5 Plus header I2C2 bus is enabled with the upstream `i2c2m0`
+  pinctrl; `/dev/i2c-2` and the SHT30/QMP6988 env-api sampling were validated
+  on the target.
 - A no-serial, watchdog-backed one-shot boot path returns to vendor Linux 6.1
   unless a candidate boot is explicitly armed.
 
