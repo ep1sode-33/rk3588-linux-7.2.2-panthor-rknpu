@@ -1,0 +1,13 @@
+[Unit]
+Description=Keep alive a network-reachable devb test kernel
+After=network-online.target ssh.service
+Wants=network-online.target ssh.service
+ConditionKernelCommandLine=watchdog.open_timeout=180
+
+[Service]
+Type=simple
+ExecStart=/usr/local/sbin/devb-kernel-test-watchdog
+Restart=no
+
+[Install]
+WantedBy=multi-user.target

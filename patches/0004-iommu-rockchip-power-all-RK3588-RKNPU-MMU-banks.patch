@@ -1,0 +1,203 @@
+From 8965c62766c99e7d1b6dd04a14c8b91c2f334f0a Mon Sep 17 00:00:00 2001
+From: Junkai Mo <mowilliam416@gmail.com>
+Date: Tue, 1 Sep 2026 07:10:40 +0000
+Subject: [PATCH 4/4] iommu: rockchip: power all RK3588 RKNPU MMU banks
+
+---
+ .../bindings/iommu/rockchip,iommu.yaml        | 48 ++++++++++++++++---
+ .../dts/rockchip/rk3588-orangepi-5-plus.dts   |  8 ++++
+ drivers/iommu/rockchip-iommu.c                | 32 ++++++++++++-
+ 3 files changed, 79 insertions(+), 9 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/iommu/rockchip,iommu.yaml b/Documentation/devicetree/bindings/iommu/rockchip,iommu.yaml
+index fc61ab1..ae39efd 100644
+--- a/Documentation/devicetree/bindings/iommu/rockchip,iommu.yaml
++++ b/Documentation/devicetree/bindings/iommu/rockchip,iommu.yaml
+@@ -49,20 +49,23 @@ properties:
+       - description: interruption for MMU instance 2
+ 
+   clocks:
+-    items:
+-      - description: Core clock
+-      - description: Interface clock
++    minItems: 2
++    maxItems: 6
+ 
+   clock-names:
+-    items:
+-      - const: aclk
+-      - const: iface
++    minItems: 2
++    maxItems: 6
+ 
+   "#iommu-cells":
+     const: 0
+ 
+   power-domains:
+-    maxItems: 1
++    minItems: 1
++    maxItems: 3
++
++  power-domain-names:
++    minItems: 3
++    maxItems: 3
+ 
+   rockchip,disable-mmu-reset:
+     $ref: /schemas/types.yaml#/definitions/flag
+@@ -93,12 +96,43 @@ allOf:
+         interrupts:
+           minItems: 3
+           maxItems: 3
++        clocks:
++          minItems: 6
++          maxItems: 6
++        clock-names:
++          items:
++            - const: aclk0
++            - const: aclk1
++            - const: aclk2
++            - const: iface0
++            - const: iface1
++            - const: iface2
++        power-domains:
++          minItems: 3
++          maxItems: 3
++        power-domain-names:
++          items:
++            - const: npu0
++            - const: npu1
++            - const: npu2
++      required:
++        - power-domains
++        - power-domain-names
+     else:
+       properties:
+         reg:
+           maxItems: 2
+         interrupts:
+           maxItems: 2
++        clocks:
++          maxItems: 2
++        clock-names:
++          items:
++            - const: aclk
++            - const: iface
++        power-domains:
++          maxItems: 1
++        power-domain-names: false
+ 
+ additionalProperties: false
+ 
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
+index 44d0b7a..967b8df 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
+@@ -117,6 +117,14 @@ &rknn_mmu_0 {
+ 	interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH 0>,
+ 		     <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH 0>,
+ 		     <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH 0>;
++	clocks = <&cru ACLK_NPU0>, <&cru ACLK_NPU1>, <&cru ACLK_NPU2>,
++		 <&cru HCLK_NPU0>, <&cru HCLK_NPU1>, <&cru HCLK_NPU2>;
++	clock-names = "aclk0", "aclk1", "aclk2",
++		      "iface0", "iface1", "iface2";
++	power-domains = <&power RK3588_PD_NPUTOP>,
++			<&power RK3588_PD_NPU1>,
++			<&power RK3588_PD_NPU2>;
++	power-domain-names = "npu0", "npu1", "npu2";
+ };
+ 
+ &rknn_mmu_1 {
+diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
+index 87ae036..182be37 100644
+--- a/drivers/iommu/rockchip-iommu.c
++++ b/drivers/iommu/rockchip-iommu.c
+@@ -22,6 +22,7 @@
+ #include <linux/of.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_domain.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+@@ -100,6 +101,10 @@ static const char * const rk_iommu_clocks[] = {
+ 	"aclk", "iface",
+ };
+ 
++static const char * const rk3588_rknpu_iommu_clocks[] = {
++	"aclk0", "aclk1", "aclk2", "iface0", "iface1", "iface2",
++};
++
+ struct rk_iommu_ops {
+ 	phys_addr_t (*pt_address)(u32 dte);
+ 	u32 (*mk_dtentries)(dma_addr_t pt_dma);
+@@ -115,6 +120,7 @@ struct rk_iommu {
+ 	int num_irq;
+ 	struct clk_bulk_data *clocks;
+ 	int num_clocks;
++	struct dev_pm_domain_list *pds;
+ 	bool reset_disabled;
+ 	struct iommu_device iommu;
+ 	struct list_head node; /* entry in rk_iommu_domain.iommus */
+@@ -1206,6 +1212,8 @@ static int rk_iommu_probe(struct platform_device *pdev)
+ 	struct rk_iommu *iommu;
+ 	struct resource *res;
+ 	const struct rk_iommu_ops *ops;
++	const char * const *clock_ids = rk_iommu_clocks;
++	bool is_rk3588_rknpu;
+ 	int num_res = pdev->num_resources;
+ 	int err, i;
+ 
+@@ -1218,6 +1226,21 @@ static int rk_iommu_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, iommu);
+ 	iommu->dev = dev;
+ 	iommu->num_mmu = 0;
++	is_rk3588_rknpu = of_device_is_compatible(dev->of_node,
++						 "rockchip,rk3588-rknpu-iommu");
++
++	if (is_rk3588_rknpu) {
++		err = devm_pm_domain_attach_list(dev, NULL, &iommu->pds);
++		if (err < 0)
++			return dev_err_probe(dev, err,
++					     "failed to attach NPU power domains\n");
++		if (err != 3)
++			return dev_err_probe(dev, -EINVAL,
++					     "expected three NPU power domains, got %d\n",
++					     err);
++
++		clock_ids = rk3588_rknpu_iommu_clocks;
++	}
+ 
+ 	ops = of_device_get_match_data(dev);
+ 	if (!rk_ops)
+@@ -1254,14 +1277,16 @@ static int rk_iommu_probe(struct platform_device *pdev)
+ 	iommu->reset_disabled = device_property_read_bool(dev,
+ 					"rockchip,disable-mmu-reset");
+ 
+-	iommu->num_clocks = ARRAY_SIZE(rk_iommu_clocks);
++	iommu->num_clocks = is_rk3588_rknpu ?
++		ARRAY_SIZE(rk3588_rknpu_iommu_clocks) :
++		ARRAY_SIZE(rk_iommu_clocks);
+ 	iommu->clocks = devm_kcalloc(iommu->dev, iommu->num_clocks,
+ 				     sizeof(*iommu->clocks), GFP_KERNEL);
+ 	if (!iommu->clocks)
+ 		return -ENOMEM;
+ 
+ 	for (i = 0; i < iommu->num_clocks; ++i)
+-		iommu->clocks[i].id = rk_iommu_clocks[i];
++		iommu->clocks[i].id = clock_ids[i];
+ 
+ 	/*
+ 	 * iommu clocks should be present for all new devices and devicetrees
+@@ -1374,6 +1399,9 @@ static const struct of_device_id rk_iommu_dt_ids[] = {
+ 	{	.compatible = "rockchip,iommu",
+ 		.data = &iommu_data_ops_v1,
+ 	},
++	{	.compatible = "rockchip,rk3588-rknpu-iommu",
++		.data = &iommu_data_ops_v2,
++	},
+ 	{	.compatible = "rockchip,rk3568-iommu",
+ 		.data = &iommu_data_ops_v2,
+ 	},
+-- 
+2.43.0
+

@@ -1,0 +1,16 @@
+# Regenerable kernel output
+out/
+output/
+modules/
+
+# Locally assembled release payloads
+release/
+*.tar
+*.tar.gz
+*.tar.xz
+*.tar.zst
+
+# Editor and OS files
+*~
+*.swp
+.DS_Store

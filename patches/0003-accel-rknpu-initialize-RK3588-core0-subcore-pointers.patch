@@ -1,0 +1,52 @@
+From 890a0027c5b89b7e130d8505caf156e9b93452cf Mon Sep 17 00:00:00 2001
+From: Junkai Mo <mowilliam416@gmail.com>
+Date: Tue, 1 Sep 2026 06:18:04 +0000
+Subject: [PATCH] accel: rknpu: initialize RK3588 core0 subcore pointers
+
+---
+ drivers/accel/rknpu/include/rknpu_drv.h | 1 +
+ drivers/accel/rknpu/rknpu_drv.c         | 1 +
+ drivers/accel/rknpu/rknpu_job.c         | 3 ++-
+ 3 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/accel/rknpu/include/rknpu_drv.h b/drivers/accel/rknpu/include/rknpu_drv.h
+index a5ec97f..018a2df 100644
+--- a/drivers/accel/rknpu/include/rknpu_drv.h
++++ b/drivers/accel/rknpu/include/rknpu_drv.h
+@@ -78,6 +78,7 @@ struct rknpu_config {
+ 	__u32 pc_task_number_mask;
+ 	__u32 pc_task_status_offset;
+ 	__u32 pc_dma_ctrl;
++	bool needs_subcore_setup;
+ 	const struct rknpu_irqs_data *irqs;
+ 	int num_irqs;
+ 	__u64 nbuf_phyaddr;
+diff --git a/drivers/accel/rknpu/rknpu_drv.c b/drivers/accel/rknpu/rknpu_drv.c
+index c183d73..7371a93 100644
+--- a/drivers/accel/rknpu/rknpu_drv.c
++++ b/drivers/accel/rknpu/rknpu_drv.c
+@@ -158,6 +158,7 @@ static const struct rknpu_config rk3588_rknpu_core0_config = {
+ 	.pc_task_number_mask = 0xfff,
+ 	.pc_task_status_offset = 0x3c,
+ 	.pc_dma_ctrl = 0,
++	.needs_subcore_setup = true,
+ 	.irqs = rknpu_irqs,
+ 	.num_irqs = ARRAY_SIZE(rknpu_irqs),
+ 	.nbuf_phyaddr = 0,
+diff --git a/drivers/accel/rknpu/rknpu_job.c b/drivers/accel/rknpu/rknpu_job.c
+index 312d9c7..b4c6cbb 100644
+--- a/drivers/accel/rknpu/rknpu_job.c
++++ b/drivers/accel/rknpu/rknpu_job.c
+@@ -301,7 +301,8 @@ static inline int rknpu_job_subcore_commit_pc(struct rknpu_job *job,
+ 		return job->ret;
+ 	}
+ 
+-	if (rknpu_dev->config->num_irqs > 1) {
++	if (rknpu_dev->config->num_irqs > 1 ||
++	    rknpu_dev->config->needs_subcore_setup) {
+ 		for (i = 0; i < rknpu_dev->config->num_irqs; i++) {
+ 			if (i == core_index) {
+ 				REG_WRITE((0xe + 0x10000000 * i), 0x1004);
+-- 
+2.43.0
+
