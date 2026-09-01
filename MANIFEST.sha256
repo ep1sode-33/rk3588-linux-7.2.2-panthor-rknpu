@@ -1,5 +1,5 @@
 cb8a6d9fc3ebcf9c10d13425a8b18b57d13661a58682be9db8e542b8dbeb3642  ./.gitignore
-71014e1a59bd4c9df6500a62910928eaf084dc519bd39471fb32446f691d8112  ./README.md
+e8fb28e6a537ed764b326b51951f50bd20f37b982c96b6dc121c49618a64440a  ./README.md
 a33be851a88fc6fbc40cd0abf9f15a27dee11ea5ddc8fe7f55df818683d68a7b  ./boot/boot-7.2.2-rk3588-panthor-rknpu-3core.cmd
 b4212e84b461a8d6c7e669d5f9a5feff211a81399171f311f13f09756b2fd26b  ./boot/boot-7.2.2-rk3588-panthor-rknpu-3core.scr
 7995a80b7fb62208b7b3aeb1506764f0abad3180ff358f07921b3ea20e6fa6b7  ./boot/boot-7.2.2-rk3588-panthor-rknpu.cmd
@@ -30,7 +30,7 @@ dc7fc6adffa9fd136eef0d28c4b0c07ea2e0e7bed0a7d3855f78b6ae7d82dd0f  ./diagnostics/
 da0a28f1642bb12d68063181a77dc125d5fbce29222e40af5872194b7ce893a6  ./diagnostics/rk3588-orangepi-5-plus-7.2.2-rk3588-panthor-rknpu-3core-iommu-pd-fix.dtb
 22da6c2de683706c5c40e66aca1dd13a6f881a8fe3cdf4d8fd6373d9c16fa41e  ./diagnostics/rk3588-orangepi-5-plus-7.2.2-rk3588-panthor-rknpu-3core-no-npu.dtb
 12366ef51defd5f46591863b2fc68525c76a0ffc7ac2c0e8aa9de722bab38a80  ./diagnostics/rknn-core-mask-preload.c
-1ca405ed6dc0640a7064ed1fdcf36def8682a5a9b0f83dd088159043648a7160  ./docs/DEPLOYMENT.md
+e19fe779386c7b596768b78d1531310f4a98ecd6f8c2e2f1e67e913deb115c6f  ./docs/DEPLOYMENT.md
 e588a091f663ca80c82f3963b750b3267957fd0aba2e97724e34a991d45be5e5  ./docs/MESA-25.md
 3e6279c1d874d3150736257c837a69f47e903e05146dbd1aad9636d4746ec8de  ./docs/REPRODUCING.md
 4291b9e6db29ce88268eea64ad1e57956fd37be29dbe0e06d432d99b0e1e0f53  ./patches/0001-accel-add-initial-mainline-RKNPU-ABI-port-for-RK3588.patch
@@ -41,11 +41,15 @@ d63ef48288b71e06d60e643e3c4923e70443aadf7e417f9a47b0e1c25b29c156  ./patches/0005
 060740d7fa7da19322a4fb54029a3787c33dd61880aacdf1709d11147b7ec680  ./scripts/boot-once/arm-devb-boot-once.sh
 02964f5c18cbf517c386fddedd041ebb41c7ac5d927cbeb81a7655645f573228  ./scripts/boot-once/boot-default-6.1.43-rockchip-rk3588.cmd
 11aeff4bd1870a2ff624fe0f30a79ae9bee5baab3b584621a1af6e7d5e3cf989  ./scripts/boot-once/boot-default-6.1.43-rockchip-rk3588.scr
-aef7dc93a834879e2903e7e9e5f700a01c0c4964bebdd83a13b39eaf06c2ac0c  ./scripts/boot-once/boot-dispatcher.cmd
-429322f8ba7de70249ddca9abe4e9239eae911456e8b172ca27fe930caf5f369  ./scripts/boot-once/boot-dispatcher.scr
+5b197f203ef8aa62ccfbce3310c225daa27f10258cd3e25f5b5f2793595aa4bd  ./scripts/boot-once/boot-default-7.2.2-rk3588-panthor-rknpu.cmd
+7bf767067e39dae770c4971ca6df424ead96177c6f7e09401baa207afd18af41  ./scripts/boot-once/boot-default-7.2.2-rk3588-panthor-rknpu.scr
+aef7dc93a834879e2903e7e9e5f700a01c0c4964bebdd83a13b39eaf06c2ac0c  ./scripts/boot-once/boot-dispatcher-default61.cmd
+429322f8ba7de70249ddca9abe4e9239eae911456e8b172ca27fe930caf5f369  ./scripts/boot-once/boot-dispatcher-default61.scr
+e8b4ead48180da100c1e2304064e33b10867ac2cc0f4752d2bc5e02a18c7d75c  ./scripts/boot-once/boot-dispatcher.cmd
+cd2ff53fc0d70367482746a3413bec0b81528e6befe7316321dd3caf3a3da93e  ./scripts/boot-once/boot-dispatcher.scr
 21f73cb5875f8a4a2217de76aef5c76ed22c7d759ac58083312d588f124457f6  ./scripts/boot-once/boot-once-7.2.2-3core.magic
 a33519b42216994ba33ba120400f6d4d4e1518fd0955686ed8cc40c89b96cea2  ./scripts/boot-once/boot-once-7.2.2-core0.magic
 f0f3e44aa9127d796d53882029b0ee1456b1ff9d81d9b95dc700435ef5e25c16  ./scripts/boot-once/boot-once-wdt61.magic
 1922c9c25a9999512988f906ccd3e094ea03e0f8aad632f1a1c420b50c92a4fc  ./scripts/boot-once/devb-kernel-test-watchdog.service
-120032bb68b0723c17a8efd385158c3988cd2dd7338e7ab4619d5a5af3325675  ./scripts/boot-once/devb-kernel-test-watchdog.sh
+ab6a491fae2f1ed2e689ab7c4aeb18c68adda0f12c65e50b91cc8633db0993ff  ./scripts/boot-once/devb-kernel-test-watchdog.sh
 d7ccef8b8c8abb87fd012d7c348e4fb9adb2677051a1630c8a769b17a820ca36  ./scripts/validate-7.2.2-rk3588.sh

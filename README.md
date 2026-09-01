@@ -22,8 +22,9 @@ through one mainline Rockchip IOMMU domain.
 - The Orange Pi 5 Plus header I2C2 bus is enabled with the upstream `i2c2m0`
   pinctrl; `/dev/i2c-2` and the SHT30/QMP6988 env-api sampling were validated
   on the target.
-- A no-serial, watchdog-backed one-shot boot path returns to vendor Linux 6.1
-  unless a candidate boot is explicitly armed.
+- Linux 7.2.2 is the default boot. Before every default boot, U-Boot arms a
+  vendor-6.1 fallback marker; userspace clears it only after NVMe root, IPv4
+  and SSH are ready. Explicit 6.1/core0/three-core one-shot targets remain.
 
 See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for the evidence, exact hashes,
 fallback design and deployment details.
@@ -37,7 +38,8 @@ documented in [docs/MESA-25.md](docs/MESA-25.md).
 - `config/`: final kernel config plus the migrated vendor config evidence.
 - `boot/`: U-Boot scripts and both validated DTBs. Large build artifacts are
   attached to the private GitHub release rather than committed to Git.
-- `scripts/boot-once/`: no-serial one-shot dispatcher and watchdog keeper.
+- `scripts/boot-once/`: fail-closed default/one-shot dispatchers, preserved
+  vendor-6.1 dispatcher, state tool and watchdog keeper.
 - `scripts/validate-7.2.2-rk3588.sh`: non-destructive first-boot validation.
 - `diagnostics/`: DT overlays, isolated DTBs and the RKNN core-mask preload
   source used to identify and prove the three-power-domain IOMMU fix.

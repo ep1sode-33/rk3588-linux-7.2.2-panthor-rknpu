@@ -1,10 +1,9 @@
-# Fail-closed default/boot-once dispatcher for devb (Orange Pi 5 Plus).
+# Fail-closed boot-once dispatcher for devb (Orange Pi 5 Plus).
 #
-# An all-zero raw NVMe LBA 61439 selects the validated Linux 7.2.2 default.
-# Before entering that kernel, the dispatcher writes and verifies the vendor
-# 6.1 fallback marker.  Linux clears the marker only after NVMe root, IPv4 and
-# SSH are ready.  An early hang therefore resets into vendor 6.1.  Explicit
-# one-shot targets remain available and are consumed before boot.
+# The normal path always sources the preserved vendor 6.1 boot script.  A
+# candidate is selected only when raw NVMe LBA 61439 contains one of the exact
+# 16-byte magic values installed alongside this script.  The state sector is
+# zeroed and read back before a candidate script is entered.
 
 # A DesignWare watchdog-triggered warm reset leaves the watchdog counting on
 # this board.  Enable its two clocks, then assert and deassert both WDT0 reset
@@ -22,7 +21,7 @@ setenv once_verify_addr 0x0e002000
 setenv once_script_addr 0x0e100000
 setenv once_state_lba 0xefff
 
-echo "devb fail-closed default boot dispatcher"
+echo "devb fail-closed boot dispatcher"
 
 mw.b ${once_state_addr} 0 0x200
 mw.b ${once_magic_addr} 0 0x200
@@ -50,44 +49,18 @@ if nvme scan; then
                     setenv once_target 3core
                 fi
             fi
-
-            if test "${once_target}" = "fallback"; then
-                mw.b ${once_magic_addr} 0 0x200
-                if cmp.b ${once_state_addr} ${once_magic_addr} 0x200; then
-                    setenv once_target default72
-                fi
-            fi
-        fi
-    fi
-fi
-
-if test "${once_target}" = "default72"; then
-    echo "Arming vendor 6.1 fallback before default Linux 7.2.2"
-    mw.b ${once_state_addr} 0 0x200
-    mw.b ${once_magic_addr} 0 0x200
-    if fatload nvme 0:1 ${once_magic_addr} boot-once-wdt61.magic; then
-        cp.b ${once_magic_addr} ${once_state_addr} 0x10
-        if nvme write ${once_state_addr} ${once_state_lba} 1; then
-            mw.b ${once_verify_addr} 0xff 0x200
-            if nvme read ${once_verify_addr} ${once_state_lba} 1; then
-                if cmp.b ${once_state_addr} ${once_verify_addr} 0x200; then
-                    setenv once_consumed yes
-                fi
-            fi
         fi
     fi
 fi
 
 if test "${once_target}" != "fallback"; then
-    if test "${once_target}" != "default72"; then
-        echo "Consuming one-shot target: ${once_target}"
-        mw.l ${once_state_addr} 0 0x80
-        if nvme write ${once_state_addr} ${once_state_lba} 1; then
-            mw.b ${once_verify_addr} 0xff 0x200
-            if nvme read ${once_verify_addr} ${once_state_lba} 1; then
-                if cmp.b ${once_state_addr} ${once_verify_addr} 0x200; then
-                    setenv once_consumed yes
-                fi
+    echo "Consuming one-shot target: ${once_target}"
+    mw.l ${once_state_addr} 0 0x80
+    if nvme write ${once_state_addr} ${once_state_lba} 1; then
+        mw.b ${once_verify_addr} 0xff 0x200
+        if nvme read ${once_verify_addr} ${once_state_lba} 1; then
+            if cmp.b ${once_state_addr} ${once_verify_addr} 0x200; then
+                setenv once_consumed yes
             fi
         fi
     fi
@@ -103,9 +76,6 @@ if test "${once_consumed}" = "yes"; then
     fi
     if test "${once_target}" = "3core"; then
         setenv once_script boot-7.2.2-rk3588-panthor-rknpu-3core.scr
-    fi
-    if test "${once_target}" = "default72"; then
-        setenv once_script boot-default-7.2.2-rk3588-panthor-rknpu.scr
     fi
 
     echo "Starting RK3588 watchdog before ${once_target}"
@@ -123,7 +93,7 @@ if test "${once_consumed}" = "yes"; then
     echo "One-shot script returned; watchdog will reset the board"
 fi
 
-echo "Booting preserved vendor 6.1 fail-closed fallback"
+echo "Booting preserved vendor 6.1 fallback"
 if fatload nvme 0:1 ${once_script_addr} boot-default-6.1.43-rockchip-rk3588.scr; then
     source ${once_script_addr}
 fi

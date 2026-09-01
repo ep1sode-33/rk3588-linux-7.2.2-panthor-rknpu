@@ -25,6 +25,15 @@ done
 
 printf 'Taking over RK3588 watchdog on %s\n' "$(uname -r)"
 exec 3>/dev/watchdog
+printf '\0' >&3
+
+if grep -qw 'devb_default_pending=1' /proc/cmdline; then
+	state_tool=/usr/local/sbin/devb-boot-once-state
+	[[ -x "${state_tool}" ]] || exit 1
+	"${state_tool}" disarm
+	printf 'Confirmed Linux 7.2.2 default boot and cleared fallback marker\n'
+fi
+
 while :; do
 	printf '\0' >&3
 	sleep 20
